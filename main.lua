@@ -9,7 +9,7 @@ G.C.BUTTPLUG = HEX("ff009d")
 local update_ref = Game.update
 function Game:update(dt, ...)
     Lust.dt = (Lust.dt or 0) - dt
-    if Lust.dt <= 0 and not Lust.reset then
+    if Lust.dt <= -0.35 and not Lust.reset then
         Lust.buttplug.send_vibrate_cmd(0, { 0 })
         Lust.reset = true
     end
