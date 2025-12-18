@@ -175,7 +175,7 @@ local function send(msg)
     buttplug.msg_counter = buttplug.msg_counter + 1
     
     local payload = "[" .. json.encode(msg) .. "]"
-    --buttplug.print("> " .. payload)
+    if Lust._DEBUG_MODE then buttplug.print("> " .. payload) end
     return buttplug.sock:send(payload)
 end
 
