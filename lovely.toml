@@ -1,0 +1,72 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = -1
+
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = '''
+create_slider({label = localize('b_set_screenshake'),w = 4, h = 0.4, ref_table = G.SETTINGS, ref_value = 'screenshake', min = 0, max = 100}),
+'''
+position = "after"
+payload = '''
+create_slider({label = localize('b_set_vibration_intensity'),w = 4, h = 0.4, ref_table = G.SETTINGS, ref_value = 'buttplug_intensity', min = 0, max = 100, colour = G.C.BUTTPLUG}),
+'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = '''
+if not G.SETTINGS.screenshake or (type(G.SETTINGS.screenshake) ~= 'number') then
+    G.SETTINGS.screenshake = G.SETTINGS.reduced_motion and 0 or 50
+end
+'''
+position = "after"
+payload = '''
+if not G.SETTINGS.buttplug_intensity or (type(G.SETTINGS.buttplug_intensity) ~= 'number') then
+    G.SETTINGS.buttplug_intensity = 100
+end
+'''
+match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = "functions/common_events.lua"
+pattern = '''
+shake_amt = (G.SETTINGS.reduced_motion and 0 or 1)*G.SETTINGS.screenshake/100*3
+if shake_amt < 0.05 then shake_amt = 0 end
+'''
+position = "after"
+payload = '''
+local plug_amt = G.SETTINGS.buttplug_intensity/100
+if plug_amt < 0.05 then shake_amt = 0 end
+
+G.BP_VIBRATION = G.BP_VIBRATION or 0
+G.CURR_BP_VIBRATION = G.CURR_BP_VIBRATION or 0
+G.CURR_BP_VIBRATION = math.min(1, G.CURR_BP_VIBRATION + G.BP_VIBRATION + G.JIGGLE_VIBRATION*0.2)
+G.BP_VIBRATION = 0
+G.CURR_BP_VIBRATION = (1-15*dt)*G.CURR_BP_VIBRATION
+
+Lust.last_speed = Lust.last_speed or 0
+if G.CURR_BP_VIBRATION > Lust.last_speed and G.CURR_BP_VIBRATION > 0.2 and Lust.dt <= 0 and Lust.buttplug and Lust.buttplug.send_vibrate_cmd then
+    Lust.vibrate(G.CURR_BP_VIBRATION * plug_amt)
+    Lust.dt = 0.2
+    Lust.last_speed = G.CURR_BP_VIBRATION * plug_amt
+end
+Lust.last_speed = Lust.last_speed * 0.95
+'''
+match_indent = true
+
+[[patches]]
+[patches.module]
+source = 'pollnet.lua'
+before = 'main.lua'
+name = 'lust/pollnet'
+
+[[patches]]
+[patches.module]
+source = 'loading.lua'
+before = 'main.lua'
+name = 'lust/loading'

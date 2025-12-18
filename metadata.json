@@ -1,0 +1,9 @@
+{
+	"id": "Lust",
+	"name": "Lust",
+	"author": ["lord.ruby"],
+	"description": "Adds Buttplug.io support to Balatro",
+	"prefix": "lust",
+	"main_file": "main.lua",
+	"version": "1.0.0"
+}
