@@ -1,7 +1,6 @@
 Lust = SMODS and SMODS.current_mod or {}
 
-Lust._DEBUG_MODE = true
-
+Lust._DEBUG_MODE = false
 require("lust/loading")
 
 G.C.BUTTPLUG = HEX("ff009d")
