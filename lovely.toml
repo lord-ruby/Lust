@@ -52,7 +52,7 @@ G.CURR_BP_VIBRATION = (1-15*dt)*G.CURR_BP_VIBRATION
 Lust.last_speed = Lust.last_speed or 0
 if G.CURR_BP_VIBRATION > Lust.last_speed and G.CURR_BP_VIBRATION > 0.2 and Lust.dt <= 0 and Lust.buttplug and Lust.buttplug.send_vibrate_cmd then
     Lust.vibrate(G.CURR_BP_VIBRATION)
-    Lust.dt = 0.2
+    Lust.dt = 0.3
 end
 Lust.last_speed = Lust.last_speed * 0.95
 '''

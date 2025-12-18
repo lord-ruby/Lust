@@ -1,6 +1,7 @@
 Lust = SMODS and SMODS.current_mod or {}
 
 Lust._DEBUG_MODE = false
+
 require("lust/loading")
 
 G.C.BUTTPLUG = HEX("ff009d")
@@ -8,6 +9,10 @@ G.C.BUTTPLUG = HEX("ff009d")
 local update_ref = Game.update
 function Game:update(dt, ...)
     Lust.dt = (Lust.dt or 0) - dt
+    if Lust.dt <= 0 and not Lust.reset then
+        Lust.buttplug.send_vibrate_cmd(0, { 0 })
+        Lust.reset = true
+    end
     return update_ref(self, dt, ...)
 end
 
@@ -18,6 +23,7 @@ function Lust.vibrate(intensity)
         Lust.buttplug.send_vibrate_cmd(0, {intensity * plug_amt})
     end
     Lust.last_speed = G.CURR_BP_VIBRATION * plug_amt
+    Lust.reset = false
 end
 
 if SMODS then
