@@ -10,7 +10,7 @@ local update_ref = Game.update
 function Game:update(dt, ...)
     Lust.dt = (Lust.dt or 0) - dt
     if Lust.dt <= -0.35 and not Lust.reset then
-        Lust.buttplug.send_vibrate_cmd(0, { 0 })
+        Lust.buttplug.send_vibrate_cmd(Lust.config.device_index, { 0 })
         Lust.reset = true
     end
     return update_ref(self, dt, ...)
@@ -20,7 +20,7 @@ function Lust.vibrate(intensity)
     local plug_amt = G.SETTINGS.buttplug_intensity/100
     if plug_amt < 0.05 then shake_amt = 0 end
     if plug_amt > 0 then
-        Lust.buttplug.send_vibrate_cmd(0, {intensity * plug_amt})
+        Lust.buttplug.send_vibrate_cmd(Lust.config.device_index, {intensity * plug_amt})
     end
     Lust.last_speed = G.CURR_BP_VIBRATION * plug_amt
     Lust.reset = false
@@ -78,3 +78,35 @@ if SMODS then
         return init_localization_ref(...)
     end
 end
+
+local config_tab = function()
+    G.SETTINGS.buttplug_intensity = G.SETTINGS.buttplug_intensity or 100
+    _nodes = {
+		{
+			n = G.UIT.R,
+			config = { align = "cm" },
+			nodes = {
+			},
+		},
+	}
+	left_settings = { n = G.UIT.C, config = { align = "tl", padding = 0.05 }, nodes = {} }
+	right_settings = { n = G.UIT.C, config = { align = "tl", padding = 0.05 }, nodes = {} }
+	config = { n = G.UIT.R, config = { align = "tm", padding = 0 }, nodes = { left_settings, right_settings } }
+	_nodes[#_nodes + 1] = config
+    _nodes[#_nodes + 1] = create_slider({label = localize('b_set_vibration_intensity'),w = 4, h = 0.4, ref_table = G.SETTINGS, ref_value = 'buttplug_intensity', min = 0, max = 100, colour = G.C.BUTTPLUG})
+	_nodes[#_nodes + 1] = create_slider({label = localize('b_device_index'),w = 4, h = 0.4, ref_table = Lust.config, ref_value = 'device_index', min = 0, max = 10, colour = G.C.BUTTPLUG})
+
+	return {
+		n = G.UIT.ROOT,
+		config = {
+			emboss = 0.05,
+			minh = 6,
+			r = 0.1,
+			minw = 10,
+			align = "cm",
+			padding = 0.2,
+		},
+		nodes = _nodes,
+	}
+end
+Lust.config_tab = config_tab
