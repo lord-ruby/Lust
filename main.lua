@@ -33,7 +33,39 @@ if SMODS then
         px = 34,
         py = 34,
     }:register()
+    local config_tab = function()
+        G.SETTINGS.buttplug_intensity = G.SETTINGS.buttplug_intensity or 100
+        _nodes = {
+            {
+                n = G.UIT.R,
+                config = { align = "cm" },
+                nodes = {
+                },
+            },
+        }
+        left_settings = { n = G.UIT.C, config = { align = "tl", padding = 0.05 }, nodes = {} }
+        right_settings = { n = G.UIT.C, config = { align = "tl", padding = 0.05 }, nodes = {} }
+        config = { n = G.UIT.R, config = { align = "tm", padding = 0 }, nodes = { left_settings, right_settings } }
+        _nodes[#_nodes + 1] = config
+        _nodes[#_nodes + 1] = create_slider({label = localize('b_set_vibration_intensity'),w = 4, h = 0.4, ref_table = G.SETTINGS, ref_value = 'buttplug_intensity', min = 0, max = 100, colour = G.C.BUTTPLUG})
+        _nodes[#_nodes + 1] = create_slider({label = localize('b_device_index'),w = 4, h = 0.4, ref_table = Lust.config, ref_value = 'device_index', min = 0, max = 10, colour = G.C.BUTTPLUG})
 
+        return {
+            n = G.UIT.ROOT,
+            config = {
+                emboss = 0.05,
+                minh = 6,
+                r = 0.1,
+                minw = 10,
+                align = "cm",
+                padding = 0.2,
+                colour = G.C.BLACK
+            },
+            nodes = _nodes,
+        }
+    end
+    Lust.config_tab = config_tab
+else
     function _table_merge(target, source, ...)
         assert(type(target) == "table", "Target is not a table")
         local tables_to_merge = { source, ... }
@@ -77,36 +109,16 @@ if SMODS then
         end
         return init_localization_ref(...)
     end
-end
 
-local config_tab = function()
-    G.SETTINGS.buttplug_intensity = G.SETTINGS.buttplug_intensity or 100
-    _nodes = {
-		{
-			n = G.UIT.R,
-			config = { align = "cm" },
-			nodes = {
-			},
-		},
-	}
-	left_settings = { n = G.UIT.C, config = { align = "tl", padding = 0.05 }, nodes = {} }
-	right_settings = { n = G.UIT.C, config = { align = "tl", padding = 0.05 }, nodes = {} }
-	config = { n = G.UIT.R, config = { align = "tm", padding = 0 }, nodes = { left_settings, right_settings } }
-	_nodes[#_nodes + 1] = config
-    _nodes[#_nodes + 1] = create_slider({label = localize('b_set_vibration_intensity'),w = 4, h = 0.4, ref_table = G.SETTINGS, ref_value = 'buttplug_intensity', min = 0, max = 100, colour = G.C.BUTTPLUG})
-	_nodes[#_nodes + 1] = create_slider({label = localize('b_device_index'),w = 4, h = 0.4, ref_table = Lust.config, ref_value = 'device_index', min = 0, max = 10, colour = G.C.BUTTPLUG})
-
-	return {
-		n = G.UIT.ROOT,
-		config = {
-			emboss = 0.05,
-			minh = 6,
-			r = 0.1,
-			minw = 10,
-			align = "cm",
-			padding = 0.2,
-		},
-		nodes = _nodes,
-	}
+    if love.filesystem.exists("config/Lust.jkr") then
+    local str = ""
+    for line in love.filesystem.lines("config/Overflow.jkr") do
+        str = str..line
+    end
+        return loadstring(str)()
+    else    
+        return {
+            device_index = 0
+        }
+    end
 end
-Lust.config_tab = config_tab
