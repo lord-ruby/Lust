@@ -115,9 +115,9 @@ else
     for line in love.filesystem.lines("config/Lust.jkr") do
         str = str..line
     end
-        return loadstring(str)()
+        Lust.config = loadstring(str)()
     else    
-        return {
+        Lust.config = {
             device_index = 0
         }
     end
