@@ -112,7 +112,7 @@ else
 
     if love.filesystem.exists("config/Lust.jkr") then
     local str = ""
-    for line in love.filesystem.lines("config/Overflow.jkr") do
+    for line in love.filesystem.lines("config/Lust.jkr") do
         str = str..line
     end
         return loadstring(str)()
